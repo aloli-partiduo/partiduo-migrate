@@ -1,5 +1,5 @@
 name: partiduo-migrate
-version: 0.1.0
+version: 0.1.1
 
 description: |
   Reprise d'un dossier comptable dans une instance Partiduo neuve
@@ -23,7 +23,7 @@ dependencies:
   partiduo:
     path: ../partiduo-app
   marten:
-    path: ../../marten
+    path: ../../prod-crystal/marten
   pg:
     github: will/crystal-pg
 
