@@ -14,3 +14,5 @@
 # Le fichier global de l’utilisateur ignore *.sql et .editorconfig : ceux-ci font partie du dépôt.
 !/scripts/*.sql
 !/.editorconfig
+# Override local du développement (scripts/override-local.sh), jamais versionné.
+/shard.override.yml

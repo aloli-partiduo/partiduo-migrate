@@ -22,8 +22,8 @@ jobs:
     container: crystallang/crystal:1.19.1
     steps:
       - uses: actions/checkout@v4
-      - name: Dépendances path (cœur, shards maison)
-        run: scripts/ci-checkout-deps.sh
+      - name: Verrou sans dépendance « path » (exigé par les ports FreeBSD)
+        run: "! grep -q 'path:' shard.lock"
       - name: Format
         run: crystal tool format --check src spec config
       - name: Aucune mention du logiciel d'origine hors *.adoc et *.md
@@ -87,8 +87,6 @@ jobs:
           repo="${LEGACY_REPO:-$(sed -n 's/^:legacy-repo: *//p' README.adoc)}"
           test -n "$repo"
           git clone --depth 1 "$repo" "$LEGACY_APP"
-      - name: Dépendances path (cœur, shards maison)
-        run: scripts/ci-checkout-deps.sh
       - name: Shards
         run: shards install
       - name: Base d'origine de démonstration

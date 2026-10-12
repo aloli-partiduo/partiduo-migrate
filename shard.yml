@@ -1,5 +1,5 @@
 name: partiduo-migrate
-version: 0.1.1
+version: 0.1.2
 
 description: |
   Reprise d'un dossier comptable dans une instance Partiduo neuve
@@ -21,9 +21,11 @@ targets:
 dependencies:
   # Le cœur : contrat Partiduo::Api, seule surface d'écriture (ADR-003 D6).
   partiduo:
-    path: ../partiduo-app
+    github: aloli-partiduo/partiduo-app
+    branch: development
   marten:
-    path: ../../prod-crystal/marten
+    github: aloli-crystal/marten
+    branch: production
   pg:
     github: will/crystal-pg
 
