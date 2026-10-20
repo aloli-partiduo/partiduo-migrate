@@ -34,7 +34,7 @@ shards:
 
   jose:
     git: https://github.com/aloli-crystal/jose.git
-    version: 0.2.0
+    version: 0.2.1
 
   jwt:
     git: https://github.com/crystal-community/jwt.git
@@ -62,7 +62,7 @@ shards:
 
   partiduo:
     git: https://github.com/aloli-partiduo/partiduo-app.git
-    version: 0.1.10+git.commit.ba07dd1ed8277c76176e8706a2d495d956494602
+    version: 0.1.30+git.commit.b42da7ef2aa9c4874ebfdbb548b99bc8b43a49e9
 
   password-policy:
     git: https://github.com/aloli-crystal/password-policy.git
@@ -70,7 +70,7 @@ shards:
 
   pdf:
     git: https://github.com/aloli-crystal/pdf.git
-    version: 1.22.1
+    version: 1.22.2
 
   pdf-a:
     git: https://github.com/aloli-crystal/pdf-a.git
@@ -78,7 +78,7 @@ shards:
 
   pdf-validate:
     git: https://github.com/aloli-crystal/pdf-validate.git
-    version: 0.47.0+git.commit.e4ceee1d62745a75b13d5e164da269d07a7fbe89
+    version: 0.47.1+git.commit.eadf68c033da417b29795db490453462de465bc0
 
   pg:
     git: https://github.com/will/crystal-pg.git
@@ -86,7 +86,7 @@ shards:
 
   saml:
     git: https://github.com/aloli-crystal/saml.git
-    version: 1.18.1.3+git.commit.d879b94f85ab1480a73cbbcc821f48d471d8f4fb
+    version: 1.18.1.4+git.commit.95072f5f76482a0b5d25bfbfaceed824e68cfdb4
 
   stumpy_core:
     git: https://github.com/stumpycr/stumpy_core.git
@@ -106,5 +106,5 @@ shards:
 
   webauthn:
     git: https://github.com/aloli-crystal/webauthn.git
-    version: 0.1.0+git.commit.9df38fbe65ad709096ef5455c27e5e13f49dc66e
+    version: 0.1.1+git.commit.21fa484ef5bb04ba132c28923eeca32069ecde84
 

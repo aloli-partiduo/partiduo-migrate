@@ -1,0 +1,82 @@
+= partiduo-migrate — décisions
+:toc: left
+:toc-title: Table des matières
+:icons: font
+
+Décisions prises pour l'outil de reprise `partiduo-migrate`, quand un point
+n'était pas tranché par les ADR (contexte, choix, alternative écartée). Les
+ADR ne sont jamais modifiés.
+
+*Décisions antérieures.* Du lot M jusqu'au 13 octobre 2026, les décisions
+de l'outil sont dans le `DECISIONS.adoc` de `partiduo-app` (D-MIG-001 à
+D-MIG-022, sections du lot M et du lot 3) : elles restent valables et ne
+sont pas recopiées ici. Ce fichier les continue à partir de D-MIG-023 ;
+`partiduo-app` n'en reçoit plus.
+
+Spécification : ADR-001 D5 (reprise d'un dossier), ADR-003 (contrat
+d'extension, D6 surface publique ; amendements adoptés le 13 octobre 2026,
+dont A-IMP-4 de `partiduo-import`), D-AMD-020 du cœur (lecteur FEC commun,
+contrat 0.14.0).
+
+== Décisions
+
+=== D-MIG-023 — Lecteur FEC commun du cœur, en lecture stricte (A-IMP-4, 20 octobre 2026)
+
+*Contexte.* L'outil avait son propre lecteur de FEC (D-MIG-009, D-MIG-013,
+D-MIG-015, D-MIG-020 du cœur), comme `partiduo-import`. L'amendement
+A-IMP-4, adopté (D-AMD-020 du cœur, contrat 0.14.0), a mis dans le contrat
+`Partiduo::Api::Accounting.read_fec(actor, bytes, encoding, strict) :
+FecFileView`, qui reprend ses règles (encodages, zones de l'arrêté,
+équilibre, montants `1.234,56`, montants bruts de chaque ligne pour le
+contrôle de lecture, lettrage, devise) et y ajoute celles de l'import.
+
+*Choix.* `Fec::Reader` garde son interface (`read`, `read_file`,
+`problems`, `warnings`, `encoding`, `separator`) mais lit par `read_fec`
+avec l'acteur système, en lecture *stricte* — c'est ce que l'outil
+exigeait : zones de l'article A47 A-1 (sauf `Montantdevise` et `Idevise`),
+tabulation ou barre verticale. Il construit le `Source::Dataset` à partir
+du `FecFileView` :
+
+* écritures et lignes dans l'ordre du fichier ; journaux, comptes et tiers
+  dans l'ordre de leur première ligne, avec son libellé (comme avant :
+  l'ordre de création dans l'instance ne change pas) ;
+* contrôle de lecture (`Source::Control`, D-MIG-015) sur les montants
+  bruts de chaque ligne (`raw_debit`, `raw_credit`), par compte, journal
+  et mois, lignes sans effet exclues ; lignes sans effet comptées ;
+* défauts rendus dans les termes de l'outil (`migrate.fec.*`, numéro de
+  ligne et zone, référence `OD n° 1`, montants à virgule) ; un défaut que
+  l'outil ne nommait pas garde le message du cœur ; un encodage inconnu
+  ou illisible lève `Fec::Error` (code de sortie 2), comme avant ;
+  Comptabilité inactive : `Fec::Error` avec le motif des préconditions.
+
+Le décodage propre (`Fec::Encoding.decode`) est retiré ; `Fec::Encoding`
+ne sert plus qu'à l'écriture (`export-fec`, `--out-encoding`). La
+réconciliation relit aussi par ce lecteur le FEC réexporté par
+l'instance. Rien ne change dans la reprise elle-même (D-MIG-002 et
+suivantes) ni dans le rapport.
+
+*Non-régression.* Comparés avant le retrait, l'ancien et le nouveau
+lecteur rendent un jeu de données *identique* (écritures, lignes, ordre
+des journaux, comptes et tiers, lignes sans effet, contrôle de lecture)
+pour le FEC de démonstration (tabulation, ISO 8859-15), sa réécriture en
+UTF-8 à barre verticale et le FEC exporté de la base legacy de
+démonstration (133 écritures, 354 lignes chacun), et les mêmes défauts sur
+les cas d'erreur des specs. `spec/partiduo_migrate/fec_reader_regression_spec.cr`
+fige l'empreinte de ce jeu de données relevée avec l'ancien lecteur, les
+totaux du contrôle de lecture par journal et les chiffres « avant » du
+rapport (246 290,77 au débit et au crédit, 133 écritures).
+
+*Écarts visibles par l'utilisateur.*
+
+* Une ligne dont plusieurs zones sont illisibles signale aussi la date de
+  pièce (`PieceDate`), que l'ancien lecteur ne contrôlait qu'une fois les
+  montants lus ; le fichier est refusé dans les deux cas.
+* Un FEC qui n'a qu'un en-tête est refusé (« aucune écriture ») ; l'ancien
+  lecteur le laissait passer, sans rien à reprendre.
+* `Sens` admet aussi `DEBIT` et `CREDIT`.
+* Le contrôle `check` lit le FEC avec la Comptabilité de l'instance
+  active (droit du lecteur commun).
+
+*Alternative écartée.* Garder le lecteur propre et comparer les deux à
+chaque reprise : deux règles à tenir pour une même norme, ce que
+l'amendement visait à éviter.

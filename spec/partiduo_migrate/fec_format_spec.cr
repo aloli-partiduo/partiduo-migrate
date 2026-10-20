@@ -38,13 +38,21 @@ describe PartiduoMigrate::Fec do
     expect_raises(PartiduoMigrate::Fec::Error) { PartiduoMigrate::Fec.parse_date("20230229") }
   end
 
-  it "reconnaît l'encodage : BOM UTF-8, UTF-8, sinon ISO 8859-15" do
-    text = "Écriture €"
-    decode = ->(bytes : Bytes) { PartiduoMigrate::Fec::Encoding.decode(bytes) }
-    decode.call(Bytes[0xEF, 0xBB, 0xBF] + text.to_slice).should eq({text, "UTF-8"})
-    decode.call(text.to_slice).should eq({text, "UTF-8"})
-    decode.call(text.encode("ISO-8859-15")).should eq({text, "ISO-8859-15"})
-    PartiduoMigrate::Fec::Encoding.decode(text.encode("WINDOWS-1252"), "windows-1252").should eq({text, "WINDOWS-1252"})
+  it "reconnaît l'encodage par le lecteur commun du cœur : BOM UTF-8, UTF-8, ISO 8859-15, Windows-1252" do
+    read = ->(bytes : Bytes, forced : String?) do
+      reader = PartiduoMigrate::Fec::Reader.new(forced)
+      dataset = reader.read(bytes)
+      reader.problems.should be_empty
+      {dataset.entries.first.label, reader.encoding}
+    end
+    text = ([HEADER] + [row(label: "Écriture €"), row(account: "706000", debit: "0,00", credit: "100,00")]).join("\r\n")
+    read.call(Bytes[0xEF, 0xBB, 0xBF] + text.to_slice, nil).should eq({"Écriture €", "UTF-8"})
+    read.call(text.to_slice, nil).should eq({"Écriture €", "UTF-8"})
+    read.call(text.encode("ISO-8859-15"), nil).should eq({"Écriture €", "ISO-8859-15"})
+    quoted = text.gsub("Écriture €", "L’écriture")
+    read.call(quoted.encode("WINDOWS-1252"), nil).should eq({"L’écriture", "WINDOWS-1252"})
+    read.call(quoted.encode("WINDOWS-1252"), "cp1252").should eq({"L’écriture", "WINDOWS-1252"})
+    expect_raises(PartiduoMigrate::Fec::Error, "encodage inconnu") { read.call(text.to_slice, "ebcdic") }
     expect_raises(PartiduoMigrate::Fec::Error) { PartiduoMigrate::Fec::Encoding.encode("✓", "ISO-8859-15") }
   end
 

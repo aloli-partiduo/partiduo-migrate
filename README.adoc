@@ -23,6 +23,10 @@ contrôles d'intégrité (équilibre, périodes, pièces uniques, lettrage)
 s'appliquent aux données reprises comme à la saisie. Une spec d'architecture
 le vérifie (`spec/architecture/boundary_spec.cr`).
 
+Décisions : D-MIG-001 à D-MIG-022 dans le `DECISIONS.adoc` de
+`partiduo-app` ; les suivantes, à partir de D-MIG-023, dans
+link:DECISIONS.adoc[].
+
 == Rapport de réconciliation
 
 Chaque reprise produit un rapport, en AsciiDoc et en CSV, qui compare les
@@ -166,6 +170,13 @@ de passe.
 
 === Lecture du FEC
 
+Le FEC est lu par le lecteur commun du cœur,
+`Partiduo::Api::Accounting.read_fec`, en lecture *stricte* (contrat 0.14.0,
+cœur 0.1.30 ou suivant ; décision D-MIG-023 de link:DECISIONS.adoc[]) :
+les règles ci-dessous sont les siennes, identiques à celles du lecteur
+propre de l'outil jusqu'à la version 0.1.2. La Comptabilité doit être
+active dans l'instance pour lire le fichier, `check` compris.
+
 * Séparateur : tabulation ou barre verticale, reconnu sur l'en-tête.
 * Encodage : BOM UTF-8 ou UTF-16, UTF-8 valide, sinon ISO 8859-15 — ou
   Windows-1252 si l'ISO 8859-15 donne des caractères de contrôle C1 (€,
@@ -178,12 +189,15 @@ de passe.
   `Montant` + `Sens` accepté à la place de `Debit` / `Credit` ;
   `Montantdevise` / `Idevise` facultatives ; une zone d'échéance
   (`DateEcheance`) est reprise si elle existe.
-* Dates `AAAAMMJJ` ; montants à virgule (point, blancs, signe tolérés).
+* Dates `AAAAMMJJ` (`AAAA-MM-JJ` et `JJ/MM/AAAA` tolérées) ; montants à
+  virgule (point, blancs, signe tolérés) ; `Sens` : `D`, `C`, `+1`, `1`,
+  `-1`, `DEBIT`, `CREDIT`.
 * Écritures : lignes d'un même `EcritureNum` dans un même `JournalCode` ;
   chacune doit être équilibrée. Lignes à débit et crédit nuls ignorées
   (comptées au rapport).
-* Tout défaut est signalé avec son numéro de ligne ; un FEC qui en a n'est
-  pas importé.
+* Tout défaut est signalé avec son numéro de ligne (date de pièce,
+  de lettrage ou de validation illisible comprise) ; un fichier sans
+  aucune écriture est refusé ; un FEC qui en a n'est pas importé.
 
 === Ce que la reprise crée
 
