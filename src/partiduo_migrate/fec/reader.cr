@@ -49,11 +49,9 @@ module PartiduoMigrate
       def read(bytes : Bytes, name : String = "FEC") : Source::Dataset
         dataset = Source::Dataset.new(PartiduoMigrate.t("source.fec_description", name: name))
         dataset.file_name = name
-        view = begin
-          Acc.read_fec(@actor, bytes, @forced_encoding, strict: true)
-        rescue Partiduo::Api::AccessDenied
-          raise Error.new(PartiduoMigrate.t("preconditions.accounting_inactive"))
-        end
+        # Lecture seule, sans la Comptabilité de l'instance (cœur 0.18.0,
+        # D-MIG-024) : le contrôle `check` d'un FEC ne l'exige plus.
+        view = Acc.read_fec(@actor, bytes, @forced_encoding, strict: true)
         @encoding = view.encoding
         @separator = view.separator
         view.issues.each do |issue|

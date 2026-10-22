@@ -22,6 +22,20 @@ private def test_database_url : String
 end
 
 describe "Lecture d'un FEC : défauts relevés" do
+  it "lit et contrôle un FEC sans la Comptabilité active (D-MIG-024)" do
+    previous = ENV["PARTIDUO_MODULES"]?
+    ENV["PARTIDUO_MODULES"] = "none"
+    begin
+      Partiduo::Modules.active?("ACCOUNTING").should be_false
+      dataset, problems = read([B.row("OD", "1", "20240105", "512000", debit: "10,00"),
+                                B.row("OD", "1", "20240105", "401000", credit: "10,00")])
+      problems.should be_empty
+      dataset.entries.size.should eq(1)
+    ensure
+      previous.nil? ? ENV.delete("PARTIDUO_MODULES") : (ENV["PARTIDUO_MODULES"] = previous)
+    end
+  end
+
   it "signale une ligne qui a moins de zones que l'en-tête" do
     _, problems = read([B.row("OD", "1", "20240105", "512000", debit: "10,00").split('\t').first(10).join('\t')])
     problems.should eq(["ligne 2 : 10 zones au lieu de 18"])

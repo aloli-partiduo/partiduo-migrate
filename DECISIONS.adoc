@@ -75,8 +75,22 @@ rapport (246 290,77 au débit et au crédit, 133 écritures).
   lecteur le laissait passer, sans rien à reprendre.
 * `Sens` admet aussi `DEBIT` et `CREDIT`.
 * Le contrôle `check` lit le FEC avec la Comptabilité de l'instance
-  active (droit du lecteur commun).
+  active (droit du lecteur commun). Levé le 22 octobre 2026 (D-MIG-024).
 
 *Alternative écartée.* Garder le lecteur propre et comparer les deux à
 chaque reprise : deux règles à tenir pour une même norme, ce que
 l'amendement visait à éviter.
+
+=== D-MIG-024 — Contrôle d'un FEC sans Comptabilité active (22 octobre 2026)
+
+*Contexte.* `Accounting.read_fec` exigeait la Comptabilité active
+(D-MIG-023) : le lecteur levait alors `Fec::Error` avec le motif des
+préconditions, même pour un simple contrôle (`check`) avant la reprise
+d'un dossier qui ne l'a pas encore. Le cœur 0.18.0 l'ouvre à tout acteur
+authentifié, Comptabilité active ou non (D-AMD-037).
+
+*Choix.* Le lecteur appelle `read_fec` sans attraper de refus d'accès : le
+contournement est retiré. La reprise elle-même exige toujours la
+Comptabilité active (`Importer`, motif
+`preconditions.accounting_inactive`, inchangé). Spec : un FEC lu et
+contrôlé avec la Comptabilité inactive.

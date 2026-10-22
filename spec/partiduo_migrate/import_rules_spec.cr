@@ -182,7 +182,6 @@ describe "Règles de reprise d'un FEC" do
 
   it "refuse une instance dont la Comptabilité est inactive" do
     PartiduoMigrate::SpecSupport.provision!
-    # Lu avant : le lecteur commun du cœur exige la Comptabilité (D-MIG-023).
     dataset = B.dataset(reused_letters)
     modules = Partiduo::Api::Modules
     # Les pièces qui dépendent de la Comptabilité d'abord.
@@ -195,9 +194,11 @@ describe "Règles de reprise d'un FEC" do
     migration.run.should be_false
     migration.problems.first.message.should contain("Comptabilité inactif")
     migration.comparison.should be_nil
-    expect_raises(PartiduoMigrate::Fec::Error, "Comptabilité inactif") do
-      PartiduoMigrate::Fec::Reader.new.read(B.bytes(reused_letters))
-    end
+    # La lecture, simple contrôle, ne l'exige plus (cœur 0.18.0, D-MIG-024) :
+    # seule la reprise est refusée.
+    reader = PartiduoMigrate::Fec::Reader.new
+    reader.read(B.bytes(reused_letters)).entries.should_not be_empty
+    reader.problems.should be_empty
   end
 
   it "ne peut être menée par un utilisateur sans droits sur la Comptabilité" do
