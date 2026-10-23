@@ -86,10 +86,10 @@ Fichiers écrits dans le dossier `--report` :
 |===
 
 Rapport et messages sont dans la langue choisie par `--locale` (`fr`, `en`,
-`nl` ; défaut `fr`, traductions dans `config/locales`) ; les noms de
-fichiers ne changent pas. Les cellules de texte des CSV qui commencent par
-`=`, `+`, `-` ou `@` sont précédées d'une apostrophe (pas d'interprétation
-en formule par un tableur).
+`nl`, `de`, `es`, `it`, `pt` ; défaut `fr`, traductions dans
+`config/locales`) ; les noms de fichiers ne changent pas. Les cellules de
+texte des CSV qui commencent par `=`, `+`, `-` ou `@` sont précédées d'une
+apostrophe (pas d'interprétation en formule par un tableur).
 
 == Installation
 

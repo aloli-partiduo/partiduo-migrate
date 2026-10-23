@@ -20,11 +20,11 @@ private def values(locale : String) : Hash(String, String)
 end
 
 # Traductions de l'outil (ADR-005 D7) : messages de la ligne de commande,
-# anomalies, notes et rapport, en fr, en et nl.
-describe "Traductions de partiduo-migrate (fr, en, nl)" do
+# anomalies, notes et rapport, dans toutes les langues de Partiduo.
+describe "Traductions de partiduo-migrate (toutes les langues de Partiduo)" do
   it "a les mêmes clés, aux mêmes interpolations, dans chaque langue" do
     reference = values("fr")
-    failures = %w[en nl].flat_map do |locale|
+    failures = (PartiduoMigrate::LOCALES - ["fr"]).flat_map do |locale|
       other = values(locale)
       (reference.keys - other.keys).map { |key| "#{locale} n'a pas #{key}" } +
         (other.keys - reference.keys).map { |key| "#{locale} a #{key}, absente en fr" } +

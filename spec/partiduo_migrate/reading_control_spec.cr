@@ -168,7 +168,7 @@ describe "Rapport : cellules CSV et URL de la source" do
 end
 
 describe "Langues de l'outil" do
-  it "a les mêmes clés en français, en anglais et en néerlandais" do
+  it "a les mêmes clés dans toutes les langues de Partiduo" do
     keys = ->(locale : String) do
       flatten = uninitialized Proc(YAML::Any, String, Array(String))
       flatten = ->(node : YAML::Any, prefix : String) do
@@ -182,20 +182,23 @@ describe "Langues de l'outil" do
       flatten.call(YAML.parse(File.read(path))[locale], "").sort
     end
     french = keys.call("fr")
-    keys.call("en").should eq(french)
-    keys.call("nl").should eq(french)
+    PartiduoMigrate::LOCALES.should eq(Partiduo::LOCALES)
+    (PartiduoMigrate::LOCALES - ["fr"]).each { |locale| {locale, keys.call(locale)}.should eq({locale, french}) }
     french.should contain(".migrate.rolled_back")
   end
 
-  it "parle anglais ou néerlandais avec --locale" do
+  it "parle anglais, néerlandais ou allemand avec --locale" do
     status, stdout, _ = cli("check", "--fec", PartiduoMigrate::SpecSupport::DEMO_FEC, "--locale", "en")
     status.should eq(0)
     stdout.should contain("133 entry(ies), 354 line(s)")
     stdout.should contain("balanced.")
     cli("--locale=nl", "--help")[1].should contain("Gebruik: partiduo-migrate")
-    status, _, stderr = cli("--locale", "de", "check")
+    help = cli("--locale=de", "--help")[1]
+    help.should contain("Aufruf: partiduo-migrate")
+    help.should contain(Partiduo::LOCALES.join(", "))
+    status, _, stderr = cli("--locale", "pl", "check")
     status.should eq(2)
-    stderr.should contain("langue inconnue « de »")
+    stderr.should contain("langue inconnue « pl »")
   end
 
   it "écrit le rapport dans la langue choisie" do
