@@ -13,7 +13,7 @@ it:
           export-fec  scrive il FEC di un database di origine (DBVERSION %{dbversion})
 
         Sorgenti (import, check):
-          --fec FILE             file delle scritture contabili francese (separato da tabulazione o barra verticale)
+          --fec FILE             file delle registrazioni contabili francese (separato da tabulazione o barra verticale)
           --legacy-db URL          database di origine, tramite socket Unix: postgres:///dossier?host=/tmp
           --encoding NOME        codifica del FEC (utf-8, iso-8859-15, windows-1252); predefinita: riconosciuta
 

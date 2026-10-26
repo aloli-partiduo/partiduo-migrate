@@ -9,7 +9,7 @@ pt:
 
         Comandos:
           import      migra um dossier para a instância de DATABASE_URL (instância nova)
-          check       controla uma origem e calcula os seus números, sem escrever nada
+          check       verifica uma origem e calcula os seus números, sem escrever nada
           export-fec  escreve o FEC de uma base de dados de origem (DBVERSION %{dbversion})
 
         Origens (import, check):
@@ -137,7 +137,7 @@ pt:
       account_enabled: "Conta %{account} tornada utilizável em lançamentos (movimentada na origem)."
       vat_code_cleaned: "Taxa de IVA %{source} retomada com o código %{code}."
       vat_code_taken: "Taxa de IVA %{source} retomada com o código %{code}: o código %{taken} já está atribuído a outra taxa."
-      card_address_refused: "Ficha %{card}: endereço recusado (%{message}), conservado como atributo."
+      card_address_refused: "Ficha %{card}: morada recusada (%{message}), conservada como atributo."
       card_value_refused: "Ficha %{card}: %{field} «%{value}» recusado (%{message}), conservado como atributo."
       card_kept: "Ficha %{card} já presente na instância: conservada tal como está."
       ledger_kind_differs: "Diário %{ledger} da instância (%{kind}) retomado para o diário de origem %{source} (%{source_kind})."
@@ -252,7 +252,7 @@ pt:
       no_difference: "Nenhuma diferença: leitura da origem, balancete geral, antiguidade de saldos, diários, períodos e totais idênticos antes e depois."
       differences_warning: "%{total} linha(s) com diferenças: a migração falhou. Detalhe em `ecarts.csv`."
       reading_title: "Controlo de leitura da origem"
-      reading_intro_fec: "O FEC é totalizado durante a leitura, sobre os montantes brutos de cada linha (antes do saldo de uma linha que tenha débito e crédito); estes totais são comparados com os do modelo que a migração escreve. Como o débito e o crédito de uma linha podem ser compensados, a comparação incide sobre o número de linhas e o saldo. Detalhe em `lecture-source.csv`."
+      reading_intro_fec: "O FEC é totalizado durante a leitura, sobre os montantes brutos de cada linha (antes da compensação de uma linha que tenha débito e crédito); estes totais são comparados com os do modelo que a migração escreve. Como o débito e o crédito de uma linha podem ser compensados, a comparação incide sobre o número de linhas e o saldo. Detalhe em `lecture-source.csv`."
       reading_intro_legacy: "A base de dados de origem é relida por consultas de agregação diretamente sobre as linhas de lançamentos (`jrnx`, como o balancete da aplicação de origem), independentemente da consulta que lê os lançamentos; estes totais são comparados com os do modelo que a migração escreve. Detalhe em `lecture-source.csv`."
       reading_ok: "Nenhuma diferença: %{accounts} conta(s), %{journals} diário(s) e %{periods} meses idênticos."
       reading_failures: "%{total} linha(s) com diferenças entre a origem relida e o seu modelo: erro de leitura, a migração falhou."

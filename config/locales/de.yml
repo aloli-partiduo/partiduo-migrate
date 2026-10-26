@@ -190,7 +190,7 @@ de:
     unported:
       analytic: "Kostenrechnung"
       analytic_post: "Kostenstelle"
-      extra_attachment: "zusätzlicher Beleg"
+      extra_attachment: "zusätzlicher Anhang"
       orphan_attachment: "Anhang"
       currency: "Fremdwährungsbetrag"
       stock: "Lagerbewegung"
